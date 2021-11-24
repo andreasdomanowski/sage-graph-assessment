@@ -1,0 +1,9 @@
+{
+  "vertices": [1,2,3,4,5],
+  "edges": [[1,2],[2,4],[4,5]],
+  "selectedVertex" : 1,
+  "selectedEdge": {
+    "source": 1,
+    "destination": 2
+  }
+}
