@@ -8,7 +8,6 @@ from sage.graphs.connectivity import is_connected
 from sage.graphs.connectivity import is_cut_edge
 from sage.graphs.connectivity import is_cut_vertex
 
-
 import argparse
 import json
 
@@ -44,7 +43,7 @@ args = parser.parse_args()
 input_task_type = args.task
 if input_task_type not in [t.name for t in TaskType]:
     raise argparse.ArgumentError("The specified task type does not match the available task types."
-          "Execute this script with the flag \"--help\" to see the available task types.")
+                                 "Execute this script with the flag \"--help\" to see the available task types.")
 
 
 def main():
