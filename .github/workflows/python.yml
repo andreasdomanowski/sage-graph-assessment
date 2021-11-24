@@ -6,11 +6,12 @@ on:
 
 jobs:
   build:
+    name: Execute and Check Planarity of Demo Graph
     runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
-    - run: sudo apt install sagemath
-    - run: sage graphAssessment.py -task PLANARITY -file resources/graph.json
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - run: sudo apt install sagemath
+      - run: sage graphAssessment.py -task PLANARITY -file resources/graph.json
