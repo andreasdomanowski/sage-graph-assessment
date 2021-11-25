@@ -3,4 +3,5 @@ FROM sagemath/sagemath
 
 WORKDIR /app
 COPY . .
-CMD ["sage", "graphAssessment.py", "-task", "PLANARITY", "-file", "resources/graph.json"]
+RUN sage -pip install bottle
+CMD ["sage", "minimalWebserver.py"]
