@@ -11,4 +11,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: sudo apt install sagemath
-      - run: sage graphAssessment.py -task PLANARITY -file resources/graph.json
+      - run: sage assessment-task-server/graphAssessment.py -task PLANARITY -file resources/graph.json
