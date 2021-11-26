@@ -74,4 +74,4 @@ def graph_assessment_endpoint():
         return None
 
 
-bottle.run(host='localhost', port=8889, debug=True)
+bottle.run(host='0.0.0.0', port=8889, debug=True)
