@@ -84,15 +84,18 @@ def main():
 
 
 def assess_cut_vertex(graph, selected_vertices):
-    if len(selected_vertices) != 1:
+    if len(selected_vertices) == 0:
+        return assertion_failed("No vertex is selected.")
+
+    if len(selected_vertices) > 1:
         return assertion_failed("You may select only one vertex for this task.")
 
     selected_vertex = selected_vertices[0]
 
     if is_cut_vertex(graph, selected_vertex):
-        return assertion_passed("The selected vertices are all cut vertices")
+        return assertion_passed("The selected vertex is a cut vertex.")
     else:
-        return assertion_failed("The selected vertex is not a cut vertex")
+        return assertion_failed("The selected vertex is not a cut vertex.")
 
 
 def assess_planarity(graph):
