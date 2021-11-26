@@ -32,7 +32,7 @@ def enable_cors(fn):
 @bottle.route('/graphAssessment', method='POST')
 @enable_cors
 def graph_assessment_endpoint():
-    # sleep(1.5);
+    sleep(1.5);
     payload_as_json = json.load(bottle.request.body)
     logging.info(payload_as_json)
 
