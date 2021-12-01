@@ -112,7 +112,7 @@ def assess_planarity(graph):
 
 
 def assess_connectivity(graph):
-    if len(graph.get_vertices()) != 7 or len(graph.edges()) != 7:
+    if len(graph.get_vertices()) != 7 or len(graph.edges()) != 6:
         return assertion_failed("There must be exactly 7 vertices and 6 edges in the correct solution. "
                                 "You may need to reset the task to restore the original graph.")
 
