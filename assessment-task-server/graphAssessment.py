@@ -99,17 +99,27 @@ def assess_cut_vertex(graph, selected_vertices):
 
 
 def assess_planarity(graph):
-    if is_planar(graph):
-        return assertion_passed("The graph is planar.")
+    if len(graph.get_vertices()) != 5:
+        return assertion_failed("Do not remove or add vertices.")
+
+    if len(graph.edges()) > 10:
+        return assertion_failed("Add no more than one edge.")
+
+    if not is_planar(graph):
+        return assertion_passed("The graph is now non-planar.")
     else:
-        return assertion_failed("The graph is not planar.")
+        return assertion_failed("The graph is still planar.")
 
 
 def assess_connectivity(graph):
-    if is_connected(graph):
-        return assertion_passed("The graph is connected")
+    if len(graph.get_vertices()) != 7 or len(graph.edges()) != 6:
+        return assertion_failed("There must be exactly 7 vertices and 6 edges in the correct solution. "
+                                "You may need to reset the task to restore the original graph.")
+
+    if not is_connected(graph):
+        return assertion_passed("You removed the correct edge. The graph is disconnected now.")
     else:
-        return assertion_failed("The graph is not connected.")
+        return assertion_failed("The graph is still connected.")
 
 
 def parse_graph_from_json(json_data):

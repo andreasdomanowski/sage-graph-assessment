@@ -9,7 +9,6 @@ from graphAssessment import parse_graph_from_json, TaskType, assess_connectivity
     parse_selected_vertices_from_json, assess_cut_vertex, AssessmentResult
 
 # Setup
-
 logging.getLogger().setLevel(logging.INFO)
 
 
