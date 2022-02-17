@@ -5,7 +5,7 @@ from time import sleep
 import bottle
 from bottle import response
 
-from graphAssessment import parse_graph_from_json, TaskType, assess_connectivity, assess_planarity, \
+from graph_assessment import parse_graph_from_json, TaskType, assess_connectivity, assess_planarity, \
     parse_selected_vertices_from_json, assess_cut_vertex, AssessmentResult
 
 # Setup

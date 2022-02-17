@@ -19,6 +19,9 @@ class FormUserInterfaceComponent:
         self.form_input_answers = form_input_answers
         self.form_input_correct_answer = form_input_correct_answers
 
+    def to_json(self):
+        return json.dumps(self, default=serialize_format_user_interface_component)
+
 
 def serialize_format_user_interface_component(obj):
     if isinstance(obj, FormInputType):
@@ -27,3 +30,9 @@ def serialize_format_user_interface_component(obj):
         return obj.__dict__
 
 
+
+#a = FormUserInterfaceComponent(form_input_type=FormInputType.RADIO,
+#                               question="question?",
+#                               form_input_answers=["yes", "no"],
+#                               form_input_correct_answers=["yes"])
+# print(a.to_json())
