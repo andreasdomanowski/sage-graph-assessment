@@ -20,12 +20,6 @@ class FormUserInterfaceComponent:
         self.form_input_correct_answer = form_input_correct_answers
 
 
-a = FormUserInterfaceComponent(form_input_type=FormInputType.RADIO,
-                               question="question?",
-                               form_input_answers=["yes", "no"],
-                               form_input_correct_answers=["yes"])
-
-
 def serialize_format_user_interface_component(obj):
     if isinstance(obj, FormInputType):
         return obj.name
