@@ -31,6 +31,18 @@ def enable_cors(fn):
     return _enable_cors
 
 
+@bottle.route('/requestTask', method='GET')
+@enable_cors
+def request_task_endpoint():
+    data = None
+    with open('resources/graph.json') as json_file:
+        data = json.load(json_file)
+        print(data)
+    return json.dumps({
+        "model": data
+    })
+
+
 @bottle.route('/graphAssessment', method='POST')
 @enable_cors
 def graph_assessment_endpoint():
