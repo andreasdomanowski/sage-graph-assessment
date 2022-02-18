@@ -9,7 +9,7 @@ class FormInputType(Flag):
     RADIO = auto()
 
 
-class FormUserInterfaceComponent:
+class TaskDescription:
     def __init__(self, form_input_type: FormInputType, question: str,
                  form_input_answers: List[str], form_input_correct_answers: List[str]):
         if not set(form_input_correct_answers).issubset(form_input_answers):

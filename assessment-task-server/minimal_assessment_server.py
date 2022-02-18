@@ -5,10 +5,13 @@ from time import sleep
 import bottle
 from bottle import response
 
-from graph_assessment import parse_graph_from_json, TaskType, assess_connectivity, assess_planarity, \
-    parse_selected_vertices_from_json, assess_cut_vertex, AssessmentResult
-
 # Setup
+from graph_assessment.graph_assessment import TaskType, assess_planar, assess_eulerian, assess_bipartite
+from util.apollon_request import ApollonRequest
+
+ASSESSMENT_RESULT_MESSAGE_KEY = "message"
+ASSESSMENT_RESULT_KEY = "assessmentResponse"
+
 logging.getLogger().setLevel(logging.INFO)
 
 
@@ -31,35 +34,23 @@ def enable_cors(fn):
 @bottle.route('/graphAssessment', method='POST')
 @enable_cors
 def graph_assessment_endpoint():
-    sleep(1.5);
-    payload_as_json = json.load(bottle.request.body)
-    logging.info(payload_as_json)
-
-    input_task_type = payload_as_json["taskType"]
-    logging.info("Task type: " + input_task_type)
-
-    graph = parse_graph_from_json(payload_as_json)
-    selected_vertices = parse_selected_vertices_from_json(payload_as_json)
+    apollon_request = ApollonRequest(request_body=bottle.request.body)
 
     assessment = None
 
-    if input_task_type == TaskType.CONNECTIVITY.name:
-        assessment = assess_connectivity(graph)
+    if apollon_request.task_type == TaskType.PLANARITY.name:
+        assessment = assess_planar(apollon_request)
 
-    if input_task_type == TaskType.PLANARITY.name:
-        assessment = assess_planarity(graph)
+    if apollon_request.task_type == TaskType.EULERIAN.name:
+        assessment = assess_eulerian(apollon_request)
 
-    if input_task_type == TaskType.CUT_VERTEX.name:
-        assessment = assess_cut_vertex(graph, selected_vertices)
-
-    # not yet implemented in the frontend
-    # if input_task_type == TaskType.CUT_EDGE.name:
-    # assess_cut_edge(graph, selected_edge)
+    if apollon_request.task_type == TaskType.BIPARTITE.name:
+        assessment = assess_bipartite(apollon_request)
 
     if assessment is not None:
         # build response
-        assessment_result_key = "assessmentResponse"
-        assessment_result_message_key = "message"
+        assessment_result_key = "%s" % ASSESSMENT_RESULT_KEY
+        assessment_result_message_key = "%s" % ASSESSMENT_RESULT_MESSAGE_KEY
 
         assessment_response = {
             assessment_result_key: assessment[0].name,
@@ -74,3 +65,5 @@ def graph_assessment_endpoint():
 
 
 bottle.run(host='0.0.0.0', port=8889, debug=True)
+
+
