@@ -1,6 +1,6 @@
 import json
 import logging
-from time import sleep
+import random
 
 import bottle
 from bottle import response
@@ -36,10 +36,10 @@ def enable_cors(fn):
 def request_task_endpoint():
     data = None
     with open('resources/graph.json') as json_file:
-        data = json.load(json_file)
-        print(data)
+        data = random.choice(json.load(json_file))
     return json.dumps({
-        "model": data
+        "model": data,
+        "question": "Is the Graph planar?"
     })
 
 

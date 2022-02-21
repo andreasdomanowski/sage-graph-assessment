@@ -11,6 +11,11 @@ class TaskType(Flag):
     BIPARTITE = auto()
 
 
+class FormAnswer(Flag):
+    YES = auto()
+    NO = auto()
+
+
 class AssessmentResult(Flag):
     PASS = auto()
     FAIL = auto()
@@ -27,8 +32,8 @@ def assertion_passed(message):
     return AssessmentResult.PASS, message
 
 
-def provide_hint(hint):
-    return AssessmentResult.HINT, hint
+def provide_hint(message):
+    return AssessmentResult.HINT, message
 
 
 # Eulerian Graphs
@@ -44,16 +49,25 @@ def assess_eulerian(request: ApollonRequest):
             return provide_hint(
                 'Charakterisierung: Ein Graph ist genau dann eulersch, wenn jeder Knoten eine gerade Anzahl von '
                 'Nachbarn hat.')
-        if request.hint_level == 2:  ##encode maximum hint_level -> when this is reached, print solution
+        if request.hint_level >= 2:  ##encode maximum hint_level -> when this is reached, print solution
             if request.graph.is_eulerian():
-                provide_hint('Der Graph ist eulersch.')
+                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist eulersch.')
             else:
-                provide_hint('Der Graph ist nicht eulersch.  Es gibt ' + str(
-                    len([v for v in request.graph if
-                         request.graph.degree(v) % 2 == 1])) + ' Knoten mit ungeradem Grad.')
+                number_nodes_uneven_degree = str(len([v for v in request.graph if request.graph.degree(v) % 2 == 1]))
+                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist nicht eulersch.  Es gibt '
+                                        + number_nodes_uneven_degree + ' Knoten mit ungeradem Grad.')
     else:
-        if request.graph.is_eulerian():
-            return
+        is_graph_eulerian = request.graph.is_eulerian()
+        participant_solution = None
+        if request.solution == "yes":
+            participant_solution = True
+        if request.solution == "no":
+            participant_solution = False
+
+        if (is_graph_eulerian == participant_solution):
+            return assertion_passed("Your answer is correct.")
+        else:
+            return assertion_failed("Your answer is not correct. The graph is not eulerian.")
 
 
 # Planar Graphs
@@ -71,7 +85,7 @@ def assess_planar(request: ApollonRequest):
             'Charakterisierung: Ein Graph ist genau dann planar, wenn er keinen Teilgraphen enthält, der isomorph '
             'zu einer Unterteilung des K_5 bzw. K_3,3 ist.')
     if hint_level == 2:
-        provide_hint('Hinweis: Für n>2 gilt: ein planarer Graph mit n Knoten hat höchstens 3n-6 Kanten.')
+        return ('Hinweis: Für n>2 gilt: ein planarer Graph mit n Knoten hat höchstens 3n-6 Kanten.')
     if hint_level == 3:
         cert = G.is_planar(kuratowski=true)
         if cert[0]:  # the graph is planar
