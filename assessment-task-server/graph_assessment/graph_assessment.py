@@ -1,7 +1,7 @@
 from enum import Flag, auto
 from util.apollon_request import ApollonRequest
 
-MAX_HINT_LEVEL_NOTIFICATION = "Maximale Anzahl an Hinweisen erreicht. "
+MAX_HINT_LEVEL_NOTIFICATION = "Maximale Anzahl an Hinweisen erreicht. Keine weiteren Abgaben mehr möglich. "
 
 
 class TaskType(Flag):
