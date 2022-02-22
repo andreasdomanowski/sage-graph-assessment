@@ -160,7 +160,7 @@ def assess_bipartite(request: ApollonRequest):
         if hint_level == 2:
             return provide_hint(
                 'Charakterisierung: Ein Graph ist genau dann bipartit, wenn es keinen Kreis ungerader Länge gibt.')
-        if hint_level == 3:
+        if hint_level >= 3:
             cert = G.is_bipartite(certificate=True)
             if cert[0]:  # the graph is bipartite
                 A = [v for v in G if cert[1][v] == 0]
