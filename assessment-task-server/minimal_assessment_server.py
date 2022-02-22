@@ -34,12 +34,21 @@ def enable_cors(fn):
 @bottle.route('/requestTask', method='GET')
 @enable_cors
 def request_task_endpoint():
-    data = None
+    param_dict = bottle.request.query.decode()
+    question = "No question in response. Query does not contain a task type."
+    if "taskType" in param_dict:
+        task_type = param_dict["taskType"]
+        if task_type == "BIPARTITE":
+            question = "Is the displayed graph bipartite?"
+        if task_type == "PLANARITY":
+            question = "Is the displayed graph planar?"
+        if task_type == "EULERIAN":
+            question = "Is the displayed graph eulerian?"
     with open('resources/graph.json') as json_file:
         data = random.choice(json.load(json_file))
     return json.dumps({
         "model": data,
-        "question": "Is the Graph planar?"
+        "question": question
     })
 
 
