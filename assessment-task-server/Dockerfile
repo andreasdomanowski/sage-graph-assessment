@@ -4,4 +4,4 @@ FROM sagemath/sagemath
 WORKDIR /app
 COPY . .
 RUN sage -pip install bottle
-CMD ["sage", "minimalWebserver.py"]
+CMD ["sage", "minimal_assessment_server.py"]
