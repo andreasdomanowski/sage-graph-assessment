@@ -1,8 +1,7 @@
 from enum import Flag, auto
-
 from util.apollon_request import ApollonRequest
 
-MAX_HINT_LEVEL_NOTIFICATION = "The maximum amount of hints has been given. Please select the next task."
+MAX_HINT_LEVEL_NOTIFICATION = "Maximale Anzahl an Hinweisen erreicht. "
 
 
 class TaskType(Flag):
@@ -20,6 +19,7 @@ class AssessmentResult(Flag):
     PASS = auto()
     FAIL = auto()
     HINT = auto()
+    MAX_HINT_LEVEL_NOTIFICATION = auto()
     ERROR = auto()
 
 
@@ -34,6 +34,10 @@ def assertion_passed(message):
 
 def provide_hint(message):
     return AssessmentResult.HINT, message
+
+
+def notify_max_hint_level_reached(message):
+    return AssessmentResult.MAX_HINT_LEVEL_NOTIFICATION, message
 
 
 # Eulerian Graphs
@@ -51,11 +55,12 @@ def assess_eulerian(request: ApollonRequest):
                 'Nachbarn hat.')
         if request.hint_level >= 2:  ##encode maximum hint_level -> when this is reached, print solution
             if request.graph.is_eulerian():
-                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist eulersch.')
+                return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist eulersch.')
             else:
                 number_nodes_uneven_degree = str(len([v for v in request.graph if request.graph.degree(v) % 2 == 1]))
-                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist nicht eulersch.  Es gibt '
-                                        + number_nodes_uneven_degree + ' Knoten mit ungeradem Grad.')
+                return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist nicht eulersch.  Es '
+                                                                                   'gibt '
+                                                     + number_nodes_uneven_degree + ' Knoten mit ungeradem Grad.')
     else:
         is_graph_eulerian = request.graph.is_eulerian()
         participant_solution = None
@@ -90,14 +95,16 @@ def assess_planar(request: ApollonRequest):
         if hint_level >= 3:
             cert = G.is_planar(kuratowski=True)
             if cert[0]:  # the graph is planar
-                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist planar.')
+                return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist planar.')
             else:
                 n = len(G.vertices())
                 e = len(G.edges())
                 if n > 2 and e > 3 * n - 6:
-                    return assertion_failed(
-                        'Der Graph hat ' + str(n) + ' Knoten und ' + str(e) + ' Kanten.  Da ' + str(e) + ' > 3*' + str(
-                            n) + '-6  = ' + str(3 * n - 6) + ' gilt, ist der Graph nicht planar.')
+                    return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION +
+                                                         'Der Graph hat ' + str(n) + ' Knoten und ' + str(e) + 'Kanten.'
+                                                                                                               'Da ' + str(
+                        e) + ' > 3*' + str(
+                        n) + '-6  = ' + str(3 * n - 6) + ' gilt, ist der Graph nicht planar.')
                 else:
                     vertex_colmap = dict()
                     vertex_colmap['r'] = cert[1].vertices()
@@ -107,15 +114,20 @@ def assess_planar(request: ApollonRequest):
                     G.show(method='matplotlib', vertex_colors=vertex_colmap, edge_colors=edge_colmap)
                     try:  ##this might take a while
                         cert[1].minor(graphs.CompleteGraph(5))
-                        return assertion_failed('Der Graph ist nicht planar.  Die Knoten ' + str(
+                        return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist nicht '
+                                                                                           'planar.  Die Knoten ' + str(
                             cert[1].vertices()) + ' bilden eine Unterteilung des K_5.')
                     except ValueError as veK5:
                         try:
                             cert[1].minor(graphs.CompleteBipartiteGraph(3, 3))
-                            return assertion_failed('Der Graph ist nicht planar.  Die Knoten ' + str(
-                                cert[1].vertices()) + ' bilden eine Unterteilung des K_3,3.')
+                            return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist nicht '
+                                                                                               'planar.  Die Knoten '
+                                                                 + str(cert[1].vertices()) + 'bilden eine '
+                                                                                             'Unterteilung des K_3,3.')
                         except ValueError as veK33:
-                            return assertion_failed('Hmm, das sollte nicht passieren. Interner Fehler.')
+                            return notify_max_hint_level_reached(MAX_HINT_LEVEL_NOTIFICATION + 'Hmm, das sollte nicht '
+                                                                                               'passieren. Interner '
+                                                                                               'Fehler.')
     else:
         is_graph_planar = request.graph.is_planar()
         participant_solution = None
@@ -128,7 +140,6 @@ def assess_planar(request: ApollonRequest):
             return assertion_passed("Your answer is correct.")
         else:
             return assertion_failed("Your answer is incorrect")
-
 
 
 # Bipartite Graphs A graph is *bipartite* if its vertex set can be partitioned into two sets A and B such that no two
@@ -147,13 +158,14 @@ def assess_bipartite(request: ApollonRequest):
         if hint_level == 1:
             return provide_hint('Charakterisierung: Ein Graph ist genau dann bipartit, wenn er 2-färbbar ist.')
         if hint_level == 2:
-            return provide_hint('Charakterisierung: Ein Graph ist genau dann bipartit, wenn es keinen Kreis ungerader Länge gibt.')
+            return provide_hint(
+                'Charakterisierung: Ein Graph ist genau dann bipartit, wenn es keinen Kreis ungerader Länge gibt.')
         if hint_level == 3:
             cert = G.is_bipartite(certificate=True)
             if cert[0]:  # the graph is bipartite
                 A = [v for v in G if cert[1][v] == 0]
                 B = [v for v in G if cert[1][v] == 1]
-                return assertion_failed('Maximale Anzahl an Hinweisen erreicht. Der Graph ist bipartit.  Eine '
+                return assertion_failed(MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist bipartit.  Eine '
                                         'mögliche Zerlegung der Knotenmenge ist A = ' + str(
                     A) + ' und B = ' + str(B) + '.')  # perhaps color vertices in the drawing
                 vertex_colmap = dict()
@@ -162,7 +174,8 @@ def assess_bipartite(request: ApollonRequest):
                 G.show(method='matplotlib', vertex_colors=vertex_colmap)
             else:
                 return assertion_failed(
-                    'Maximale Anzahl an Hinweisen erreicht. Der Graph ist nicht bipartit.  Die Knoten ' + str(cert[1]) + ' bilden einen Kreis der Länge ' + str(
+                    MAX_HINT_LEVEL_NOTIFICATION + 'Der Graph ist nicht bipartit.  Die Knoten ' + str(
+                        cert[1]) + ' bilden einen Kreis der Länge ' + str(
                         len(cert[1])) + '.')  # perhaps highlight this cycle in the drawing?!
                 vertex_colmap = dict()
                 vertex_colmap['r'] = cert[1]
@@ -171,8 +184,6 @@ def assess_bipartite(request: ApollonRequest):
                 edge_colmap['red'] = [(cert[1][i], cert[1][i + 1], None) for i in range(len(cert[1]) - 1)] + [
                     (cert[1][-1], cert[1][0], None)]
                 G.show(method='matplotlib', vertex_colors=vertex_colmap, edge_colors=edge_colmap)
-
-        return MAX_HINT_LEVEL_NOTIFICATION
     else:
         is_graph_bipartite = request.graph.is_bipartite()
         participant_solution = None
